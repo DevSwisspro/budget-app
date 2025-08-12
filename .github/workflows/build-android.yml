@@ -8,66 +8,72 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci
-    
-    - name: Build web assets
-      run: npm run build:web
-    
-    - name: Set up Java
-      uses: actions/setup-java@v4
-      with:
-        distribution: 'temurin'
-        java-version: '17'
-    
-    - name: Setup Android SDK
-      uses: android-actions/setup-android@v3
-    
-    - name: Build APK
-      run: |
-        cd android
-        ./gradlew assembleRelease
-    
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
-      with:
-        name: app-release-apk
-        path: android/app/build/outputs/apk/release/app-release.apk
-    
-    - name: Create Release
-      uses: softprops/action-gh-release@v2
-      if: startsWith(github.ref, 'refs/tags/')
-      with:
-        files: android/app/build/outputs/apk/release/app-release.apk
-        title: Budget App v${{ github.ref_name }}
-        body: |
-          📱 Budget App - Version Android Sécurisée
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
           
-          ## 🔒 Fonctionnalités de sécurité
-          - Authentification par PIN sécurisé
-          - Chiffrement AES-256 des données
-          - Export/Import chiffrés
-          - Fonctionnement 100% hors ligne
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build web assets
+        run: npm run build:web
+        
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
           
-          ## 📋 Installation
-          1. Téléchargez l'APK
-          2. Activez "Sources inconnues" dans Android
-          3. Installez l'application
-          4. Définissez votre PIN au premier lancement
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        
+      - name: Fix gradlew permissions
+        run: chmod +x android/gradlew
+        
+      - name: Build Android APK
+        run: |
+          npm run sync:android
+          cd android
+          ./gradlew assembleRelease
           
-          ## 🛡️ Sécurité
-          - Toutes les données restent sur votre appareil
-          - Aucune transmission réseau
-          - Chiffrement local complet
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: budget-app-release
+          path: android/app/build/outputs/apk/release/app-release.apk
+          
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Budget App v${{ github.ref_name }}
+          body: |
+            ## Budget App - Application Android Sécurisée
+            
+            ### Fonctionnalités
+            - Gestion de budget locale et sécurisée
+            - Authentification par PIN et biométrie
+            - Export/Import chiffré des données
+            - Aucune télémetrie ou collecte de données
+            
+            ### Installation
+            1. Téléchargez l'APK ci-dessous
+            2. Activez "Sources inconnues" dans les paramètres Android
+            3. Installez l'application
+            4. Configurez votre PIN et biométrie
+            
+            ### Sécurité
+            - Données chiffrées localement
+            - Aucune connexion réseau requise
+            - Protection contre les captures d'écran
+          draft: false
+          prerelease: false
