@@ -1,0 +1,31 @@
+{
+  "project": {
+    "name": "Budget App",
+    "version": "1.0.0",
+    "description": "Application de gestion de budget sécurisée"
+  },
+  "build": {
+    "platform": "android",
+    "framework": "capacitor",
+    "minSdk": 29,
+    "targetSdk": 34
+  },
+  "security": {
+    "encryption": "AES-256",
+    "authentication": "PIN + Biometric",
+    "storage": "local-only",
+    "network": "disabled"
+  },
+  "features": {
+    "transactions": true,
+    "budgets": true,
+    "charts": true,
+    "export": true,
+    "import": true,
+    "recurring": true
+  },
+  "deployment": {
+    "method": "direct-apk",
+    "instructions": "INSTALLATION-RAPIDE.md"
+  }
+}

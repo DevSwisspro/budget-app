@@ -1,0 +1,73 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build web assets
+      run: npm run build:web
+    
+    - name: Set up Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+    
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+    
+    - name: Build APK
+      run: |
+        cd android
+        ./gradlew assembleRelease
+    
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: app-release-apk
+        path: android/app/build/outputs/apk/release/app-release.apk
+    
+    - name: Create Release
+      uses: softprops/action-gh-release@v2
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: android/app/build/outputs/apk/release/app-release.apk
+        title: Budget App v${{ github.ref_name }}
+        body: |
+          📱 Budget App - Version Android Sécurisée
+          
+          ## 🔒 Fonctionnalités de sécurité
+          - Authentification par PIN sécurisé
+          - Chiffrement AES-256 des données
+          - Export/Import chiffrés
+          - Fonctionnement 100% hors ligne
+          
+          ## 📋 Installation
+          1. Téléchargez l'APK
+          2. Activez "Sources inconnues" dans Android
+          3. Installez l'application
+          4. Définissez votre PIN au premier lancement
+          
+          ## 🛡️ Sécurité
+          - Toutes les données restent sur votre appareil
+          - Aucune transmission réseau
+          - Chiffrement local complet
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  pull_request:
+    branches: [ main, master ]
+  push:
+    branches: [ main, master ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Type check
+      run: npx tsc --noEmit
+    
+    - name: Build web assets
+      run: npm run build:web
+    
+    - name: Test build
+      run: |
+        echo "✅ Build web réussi"
+        echo "✅ TypeScript check réussi"
+        echo "✅ Prêt pour le build Android"
