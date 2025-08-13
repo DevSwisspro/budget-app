@@ -34,12 +34,12 @@ jobs:
         run: npm run cap:sync
       - uses: actions/setup-java@v4
         with: { distribution: 'temurin', java-version: '17' }
-      - name: Build DEBUG APK
+      - name: Build RELEASE APK
         working-directory: android
         timeout-minutes: 10
         run: |
           chmod +x ./gradlew
-          ./gradlew assembleDebug --stacktrace --info 2>&1 | tee build.log
+          ./gradlew assembleRelease --stacktrace --info 2>&1 | tee build.log
           echo "=== BUILD LOG END ==="
           if [ $? -ne 0 ]; then
             echo "=== LAST 50 LINES OF BUILD LOG ==="
@@ -54,12 +54,12 @@ jobs:
           echo "=== APK BUILD VERIFICATION ==="
           find . -name "*.apk" -type f | head -10
           ls -la app/build/outputs/apk/ || echo "No apk directory found"
-          ls -la app/build/outputs/apk/debug/ || echo "No debug directory found"
+          ls -la app/build/outputs/apk/release/ || echo "No release directory found"
           
-      - name: Upload APK (debug)
+      - name: Upload APK (release)
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: app-debug-apk
-          path: android/app/build/outputs/apk/**/*.apk
-          if-no-files-found: warn
+          name: app-release-apk
+          path: android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
