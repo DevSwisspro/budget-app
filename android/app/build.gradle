@@ -49,7 +49,11 @@ dependencies {
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation "androidx.multidex:multidex:2.0.1"
     
-    // Capacitor dependencies (minimal)
+    // Capacitor dependencies
+    implementation(project(":capacitor-android"))
+    implementation(project(":capacitor-device"))
+    implementation(project(":capacitor-filesystem"))
+    implementation(project(":capacitor-preferences"))
     implementation "org.apache.cordova:framework:10.1.1"
     
     testImplementation "junit:junit:$junitVersion"
