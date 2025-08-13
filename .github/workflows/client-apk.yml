@@ -1,0 +1,55 @@
+name: Build APK Client
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version for client delivery'
+        required: false
+        default: 'v1.0.0'
+
+jobs:
+  build-client-apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '20' }
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Build web assets
+        run: npm run build
+      
+      - name: Capacitor sync
+        run: npx cap sync android
+      
+      - uses: actions/setup-java@v4
+        with: { distribution: 'temurin', java-version: '17' }
+      
+      - name: Generate unsigned APK for client
+        working-directory: android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug --stacktrace
+          
+      - name: Verify APK generation
+        working-directory: android
+        run: |
+          echo "=== APK SEARCH ==="
+          find . -name "*.apk" -type f
+          ls -la app/build/outputs/ || echo "No outputs directory"
+          
+      - name: Copy APK with client name
+        working-directory: android
+        run: |
+          mkdir -p ../client-delivery
+          find . -name "*.apk" -type f -exec cp {} ../client-delivery/budget-app-${{ github.event.inputs.version || 'v1.0.0' }}.apk \;
+          
+      - name: Upload Client APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: budget-app-client-${{ github.event.inputs.version || 'v1.0.0' }}
+          path: client-delivery/*.apk
+          if-no-files-found: error
