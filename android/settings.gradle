@@ -6,13 +6,6 @@ dependencyResolutionManagement {
 rootProject.name = "app"
 include(":app")
 
-// Capacitor settings - version moderne sans fichier settings séparé
-// Les modules sont gérés automatiquement par Capacitor CLI
-def capSettings = new File("../node_modules/@capacitor/android/capacitor.settings.gradle")
-if (capSettings.exists()) {
-  apply from: capSettings
-} else {
-  // Fallback pour les versions plus récentes qui n'ont pas ce fichier
-  // Capacitor gère les modules via CLI
-  logger.info("Capacitor settings file not found, using CLI-based module management")
-}
+// Capacitor module
+include(":capacitor-android")
+project(":capacitor-android").projectDir = new File("../node_modules/@capacitor/android/capacitor")
