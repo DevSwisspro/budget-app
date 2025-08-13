@@ -18,12 +18,36 @@ jobs:
       - run: npx cap sync android || echo "no Capacitor"
       - uses: actions/setup-java@v4
         with: { distribution: 'temurin', java-version: '17' }
-      - uses: android-actions/setup-android@v3
-        with:
-          packages: |
-            platform-tools
-            platforms;android-34
-            build-tools;34.0.0
+      - name: Setup Android SDK (cmdline-tools)
+        uses: android-actions/setup-android@v3
+        # ne passe PAS 'packages' ici : on installe à la main juste après
+
+      - name: Install Android SDK packages (with retry + fallback)
+        shell: bash
+        run: |
+          set -euxo pipefail
+          export ANDROID_SDK_ROOT="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          export PATH="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH"
+
+          # S'assurer que cmdline-tools existent (certains runners les mettent ailleurs)
+          if ! command -v sdkmanager >/dev/null 2>&1; then
+            echo "sdkmanager not found"; ls -la "$ANDROID_SDK_ROOT"; exit 1
+          fi
+
+          yes | sdkmanager --licenses
+
+          install_pkg () {
+            local PKG="$1"
+            sdkmanager "$PKG" || sdkmanager --channel=0 "$PKG"
+          }
+
+          # Paquets cibles
+          install_pkg "platform-tools"
+          install_pkg "build-tools;34.0.0" || install_pkg "build-tools;33.0.2"
+          install_pkg "platforms;android-34" || install_pkg "platforms;android-33"
+
+          echo "Installed packages:"
+          sdkmanager --list || true
       - name: Restore keystore
         run: |
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > android/release.keystore
