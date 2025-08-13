@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
+    namespace "com.budget.app"
     compileSdk 35
     defaultConfig {
         applicationId "com.budget.app"
