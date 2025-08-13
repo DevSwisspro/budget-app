@@ -8,13 +8,13 @@ include(":app")
 
 // Capacitor modules (required for npx cap sync to work properly)
 include(":capacitor-android")
-project(":capacitor-android").projectDir = new File("../node_modules/@capacitor/android/capacitor")
+project(":capacitor-android").projectDir = new File("capacitor-android")
 
 include(":capacitor-device")
-project(":capacitor-device").projectDir = new File("../node_modules/@capacitor/device/android")
+project(":capacitor-device").projectDir = new File("capacitor-device")
 
 include(":capacitor-filesystem")
-project(":capacitor-filesystem").projectDir = new File("../node_modules/@capacitor/filesystem/android")
+project(":capacitor-filesystem").projectDir = new File("capacitor-filesystem")
 
 include(":capacitor-preferences")
-project(":capacitor-preferences").projectDir = new File("../node_modules/@capacitor/preferences/android")
+project(":capacitor-preferences").projectDir = new File("capacitor-preferences")

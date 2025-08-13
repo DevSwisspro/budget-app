@@ -1,0 +1,4 @@
+// Local build.gradle for capacitor-filesystem module
+dependencies {
+    implementation project(":capacitor-android")
+}

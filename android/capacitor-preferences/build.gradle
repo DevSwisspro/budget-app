@@ -1,0 +1,4 @@
+// Local build.gradle for capacitor-preferences module
+dependencies {
+    implementation project(":capacitor-android")
+}
