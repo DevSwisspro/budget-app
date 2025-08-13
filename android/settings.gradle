@@ -6,6 +6,16 @@ dependencyResolutionManagement {
 rootProject.name = "app"
 include(":app")
 
-// Capacitor module
+// Capacitor modules
 include(":capacitor-android")
 project(":capacitor-android").projectDir = new File("../node_modules/@capacitor/android/capacitor")
+
+// Capacitor plugins
+include(":capacitor-device")
+project(":capacitor-device").projectDir = new File("../node_modules/@capacitor/device/android")
+
+include(":capacitor-filesystem")
+project(":capacitor-filesystem").projectDir = new File("../node_modules/@capacitor/filesystem/android")
+
+include(":capacitor-preferences")
+project(":capacitor-preferences").projectDir = new File("../node_modules/@capacitor/preferences/android")
