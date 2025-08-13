@@ -1,20 +1,13 @@
 pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
 dependencyResolutionManagement {
   repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-  repositories { google(); mavenCentral() }
+  repositories { 
+    google(); 
+    mavenCentral(); 
+    maven { url "https://maven.capacitorjs.com" }
+  }
 }
 rootProject.name = "app"
 include(":app")
 
-// Capacitor modules (required for npx cap sync to work properly)
-include(":capacitor-android")
-project(":capacitor-android").projectDir = new File("capacitor-android")
-
-include(":capacitor-device")
-project(":capacitor-device").projectDir = new File("capacitor-device")
-
-include(":capacitor-filesystem")
-project(":capacitor-filesystem").projectDir = new File("capacitor-filesystem")
-
-include(":capacitor-preferences")
-project(":capacitor-preferences").projectDir = new File("capacitor-preferences")
+// Capacitor modules removed - using Maven dependencies instead

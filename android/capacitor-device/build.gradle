@@ -1,4 +1,0 @@
-// Local build.gradle for capacitor-device module
-dependencies {
-    implementation project(":capacitor-android")
-}
