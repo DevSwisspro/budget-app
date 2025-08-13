@@ -28,7 +28,11 @@ jobs:
       - uses: actions/setup-java@v4
         with: { distribution: 'temurin', java-version: '17' }
       
-      - name: Generate unsigned APK for client
+      - name: Generate APK for client (Capacitor method)
+        run: |
+          npx cap build android --no-open
+          
+      - name: Alternative - Direct Gradle build
         working-directory: android
         run: |
           chmod +x ./gradlew
