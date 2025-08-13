@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build || react-scripts build || next build && next export",
+    "build": "vite build",
     "build:web": "vite build",
     "cap:sync": "npx cap copy android && npx cap sync android",
     "sync:android": "npx cap sync android",

@@ -5,8 +5,15 @@ on:
   push:
     branches: [ main ]
 
+permissions: { contents: read }
+
+concurrency:
+  group: android-debug-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build-debug:
+    if: ${{ github.actor != 'dependabot[bot]' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -14,16 +21,14 @@ jobs:
         with: { node-version: '20' }
       - name: Install deps
         run: npm ci
-      - name: Build web assets
+      - name: Build web (Vite)
         run: npm run build
       - name: Show build output
         run: |
           ls -la dist || true
-          ls -la build || true
-          ls -la out || true
+          grep -R "webDir" -n capacitor.config.* || true
       - name: Capacitor copy+sync
         run: npm run cap:sync
-
       - uses: actions/setup-java@v4
         with: { distribution: 'temurin', java-version: '17' }
       - name: Build DEBUG APK
@@ -31,7 +36,6 @@ jobs:
         run: |
           chmod +x ./gradlew
           ./gradlew assembleDebug --stacktrace
-
       - name: Upload APK (debug)
         uses: actions/upload-artifact@v4
         with:
