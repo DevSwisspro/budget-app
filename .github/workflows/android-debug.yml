@@ -10,31 +10,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
+      - run: npm ci
+      - name: Debug list capacitor android files
+        run: ls -la node_modules/@capacitor/android || true
+      - run: npx cap sync android
 
-      - name: Install deps & build web
-        run: |
-          npm ci
-          npm run build || npm run build:web || echo "no web build step"
-
-      - name: Capacitor sync
-        run: npx cap sync android
-
-      - name: Setup JDK 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-
-      - name: Use preinstalled Android SDK
-        run: |
-          echo "ANDROID_SDK_ROOT=${ANDROID_HOME:-$ANDROID_SDK_ROOT}" >> $GITHUB_ENV
-          echo "PATH=$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH" >> $GITHUB_ENV
-          echo "Using Android SDK: $ANDROID_SDK_ROOT"
-          ls -la "$ANDROID_SDK_ROOT/platforms/" || echo "No platforms directory found"
-
+      - uses: actions/setup-java@v4
+        with: { distribution: 'temurin', java-version: '17' }
       - name: Build DEBUG APK
         working-directory: android
         run: |
