@@ -9,7 +9,7 @@ interface LockScreenProps {
 export default function LockScreen({ onUnlock, isFirstTime = false }: LockScreenProps) {
   const [pin, setPin] = useState('')
   const [confirmPin, setConfirmPin] = useState('')
-  const [isSettingPin, setIsSettingPin] = useState(isFirstTime)
+  const [isSettingPin] = useState(isFirstTime)
   const [error, setError] = useState('')
   const [biometricAvailable, setBiometricAvailable] = useState(false)
   const [useBiometric, setUseBiometric] = useState(false)
