@@ -16,12 +16,7 @@ buildscript {
     }
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
+// allprojects removed - using dependencyResolutionManagement in settings.gradle
 
 apply from: "variables.gradle"
 
