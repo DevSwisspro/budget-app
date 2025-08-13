@@ -23,10 +23,13 @@ jobs:
         run: npm ci
       - name: Build web (Vite)
         run: npm run build
+
       - name: Show build output
         run: |
           ls -la dist || true
-          grep -R "webDir" -n capacitor.config.* || true
+          echo "Capacitor Android files:"
+          ls -la node_modules/@capacitor/android/ || true
+
       - name: Capacitor copy+sync
         run: npm run cap:sync
       - uses: actions/setup-java@v4
