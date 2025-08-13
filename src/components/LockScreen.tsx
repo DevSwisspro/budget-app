@@ -160,15 +160,41 @@ export default function LockScreen({ onUnlock, isFirstTime = false }: LockScreen
         </button>
 
         {!isSettingPin && (
-          <button 
-            className="forgot-pin-btn"
-            onClick={() => {
-              // En production, implémenter la récupération de PIN
-              setError('Contactez le support pour récupérer votre accès')
-            }}
-          >
-            Mot de passe oublié ?
-          </button>
+          <>
+            <button 
+              className="forgot-pin-btn"
+              onClick={() => {
+                // En production, implémenter la récupération de PIN
+                setError('Contactez le support pour récupérer votre accès')
+              }}
+            >
+              Mot de passe oublié ?
+            </button>
+            
+            <button 
+              className="reset-app-btn"
+              style={{
+                marginTop: '12px',
+                padding: '8px 16px',
+                background: 'var(--danger, #dc3545)',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+              onClick={() => {
+                if (confirm('⚠️ ATTENTION : Ceci effacera TOUTES les données de l\'application et permettra de créer un nouveau PIN.\n\nÊtes-vous sûr de vouloir continuer ?')) {
+                  // Effacer toutes les données
+                  localStorage.clear()
+                  // Recharger la page pour redémarrer à zéro
+                  window.location.reload()
+                }
+              }}
+            >
+              🔄 Nouveau compte / Réinitialiser
+            </button>
+          </>
         )}
       </div>
     </div>

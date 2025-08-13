@@ -69,9 +69,17 @@
 ## 🆘 **Support**
 
 ### Questions fréquentes
-- **PIN oublié** : Contactez le développeur
+- **PIN oublié** : Utilisez le bouton "🔄 Nouveau compte / Réinitialiser" 
+- **Première utilisation sur cet appareil** : Cliquez "🔄 Nouveau compte / Réinitialiser" pour créer votre PIN
 - **Données perdues** : Utilisez la fonction Export/Import
 - **App lente** : Videz le cache du navigateur
+
+### 🔄 **Créer votre propre compte**
+Si quelqu'un d'autre a déjà utilisé l'app sur cet appareil :
+1. **Cliquez** sur "🔄 Nouveau compte / Réinitialiser" 
+2. **Confirmez** la suppression des anciennes données
+3. **Créez** votre propre PIN
+4. **Commencez** avec une app vierge
 
 ### Contact
 - **Développeur** : [Votre nom]
