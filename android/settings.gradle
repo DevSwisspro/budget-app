@@ -20,7 +20,18 @@ dependencyResolutionManagement {
 }
 
 include ':app'
-include ':capacitor-cordova-android-plugins'
-project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
+include ':capacitor_cordova_android_plugins'
+project(':capacitor_cordova_android_plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
 
-apply from: 'capacitor.settings.gradle'
+// Capacitor modules with valid names
+include ':capacitor_android'
+project(':capacitor_android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
+
+include ':capacitor_device'
+project(':capacitor_device').projectDir = new File('../node_modules/@capacitor/device/android')
+
+include ':capacitor_filesystem'
+project(':capacitor_filesystem').projectDir = new File('../node_modules/@capacitor/filesystem/android')
+
+include ':capacitor_preferences'
+project(':capacitor_preferences').projectDir = new File('../node_modules/@capacitor/preferences/android')

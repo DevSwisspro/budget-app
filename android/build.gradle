@@ -30,7 +30,7 @@ subprojects {
                     targetCompatibility JavaVersion.VERSION_17
                 }
                 // Enable namespace for all Android modules
-                namespace = project.findProperty('android.namespace') ?: project.name
+                namespace = project.findProperty('android.namespace') ?: project.name.replace('-', '_')
             }
         }
     }
