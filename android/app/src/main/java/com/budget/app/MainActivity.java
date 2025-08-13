@@ -1,5 +1,12 @@
-package com.getcapacitor.myapp;
+package com.budget.app;
 
-import com.getcapacitor.BridgeActivity;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
 
-public class MainActivity extends BridgeActivity {}
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+}
