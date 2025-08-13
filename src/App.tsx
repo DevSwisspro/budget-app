@@ -59,11 +59,10 @@ function App() {
     async function initializeSecurity() {
       try {
         await SecurityService.initialize()
-        const isFirstTimeUser = !SecurityService.isUserAuthenticated()
-        setIsFirstTime(isFirstTimeUser)
-        if (!isFirstTimeUser) {
-          setIsLocked(false)
-        }
+        // Vérifier si un PIN existe déjà (première utilisation = pas de PIN)
+        const hasExistingPin = await SecurityService.hasPin()
+        setIsFirstTime(!hasExistingPin)
+        setIsLocked(true) // Toujours verrouillé au démarrage
       } catch (error) {
         console.error('Erreur lors de l\'initialisation de la sécurité:', error)
         setIsFirstTime(true)

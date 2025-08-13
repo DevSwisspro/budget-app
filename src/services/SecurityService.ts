@@ -85,6 +85,12 @@ export class SecurityService {
     }
   }
 
+  // Vérifier si un PIN existe
+  async hasPin(): Promise<boolean> {
+    if (!this.config) return false
+    return this.config.pinHash !== ''
+  }
+
   // Définir un PIN
   async setPin(pin: string): Promise<void> {
     if (!this.config) throw new Error('Configuration non initialisée')
