@@ -49,15 +49,20 @@ dependencies {
     implementation "androidx.core:core-splashscreen:$coreSplashScreenVersion"
     implementation "androidx.multidex:multidex:2.0.1"
     
-    // Capacitor dependency
+    // Capacitor dependencies
     implementation project(':capacitor-android')
+    implementation "org.apache.cordova:framework:10.1.1"
+    implementation "androidx.activity:activity:$androidxActivityVersion"
+    implementation "androidx.fragment:fragment:$androidxFragmentVersion"
+    implementation "androidx.webkit:webkit:$androidxWebkitVersion"
     
     testImplementation "junit:junit:$junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
 }
 
-apply from: "../../node_modules/@capacitor/android/capacitor/build.gradle"
+// Capacitor configuration - ne pas appliquer le build.gradle directement
+// car il contient com.android.library qui entre en conflit avec com.android.application
 
 try {
     def servicesJSON = file('google-services.json')
