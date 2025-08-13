@@ -12,10 +12,17 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with: { node-version: '20' }
-      - run: npm ci
-      - name: Debug list capacitor android files
-        run: ls -la node_modules/@capacitor/android || true
-      - run: npx cap sync android
+      - name: Install deps
+        run: npm ci
+      - name: Build web assets
+        run: npm run build
+      - name: Show build output
+        run: |
+          ls -la dist || true
+          ls -la build || true
+          ls -la out || true
+      - name: Capacitor copy+sync
+        run: npm run cap:sync
 
       - uses: actions/setup-java@v4
         with: { distribution: 'temurin', java-version: '17' }
