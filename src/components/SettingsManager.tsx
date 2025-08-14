@@ -7,6 +7,7 @@ import BudgetsEditor from './BudgetsEditor'
 import RulesEditor from './RulesEditor'
 import RecurringPanel from './RecurringPanel'
 import ExportPanel from './ExportPanel'
+import { resetAll } from '../core/pin'
 
 // Composant pour ajouter une nouvelle catégorie
 function AddCategoryForm({ onAdd }: { onAdd: (name: string) => void }) {
@@ -41,7 +42,7 @@ function AddCategoryForm({ onAdd }: { onAdd: (name: string) => void }) {
   )
 }
 
-type TabType = 'general' | 'categories' | 'budgets' | 'rules' | 'recurring' | 'export'
+type TabType = 'general' | 'categories' | 'budgets' | 'rules' | 'recurring' | 'export' | 'security'
 
 type Props = {
   // Settings
@@ -82,6 +83,7 @@ export default function SettingsManager(props: Props) {
     { id: 'rules', label: 'Règles', icon: '🔧', description: 'Règles automatiques de catégorisation' },
     { id: 'recurring', label: 'Récurrences', icon: '🔄', description: 'Gérer les dépenses récurrentes' },
     { id: 'export', label: 'Import/Export', icon: '📤', description: 'Sauvegarder et restaurer les données' },
+    { id: 'security', label: 'Sécurité', icon: '🔒', description: 'Paramètres de sécurité et réinitialisation' },
   ]
 
   function renderTabContent() {
@@ -157,6 +159,77 @@ export default function SettingsManager(props: Props) {
               budgets={props.budgets}
               onRestore={props.onRestore}
             />
+          </div>
+        )
+      
+      case 'security':
+        return (
+          <div className="panel">
+            <h3 style={{ marginTop: 0 }}>Paramètres de sécurité</h3>
+            
+            <div style={{ 
+              background: 'rgba(239, 68, 68, 0.1)', 
+              border: '1px solid rgba(239, 68, 68, 0.3)',
+              borderRadius: '8px',
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <h4 style={{ margin: '0 0 8px 0', color: 'var(--error)' }}>
+                ⚠️ Zone de danger
+              </h4>
+              <p style={{ margin: '0 0 16px 0', fontSize: '14px', color: 'var(--muted)' }}>
+                La réinitialisation supprimera définitivement votre code PIN et toutes vos données (transactions, budgets, paramètres). Cette action est irréversible.
+              </p>
+              
+              <button
+                onClick={() => {
+                  if (confirm('⚠️ ATTENTION - Cette action est irréversible !\n\nVoulez-vous vraiment réinitialiser l\'application ?\n\nCela supprimera :\n• Votre code PIN\n• Toutes vos transactions\n• Tous vos budgets\n• Tous vos paramètres\n\nTapez "RESET" pour confirmer')) {
+                    const userInput = prompt('Pour confirmer la réinitialisation, tapez exactement "RESET" (en majuscules) :');
+                    if (userInput === 'RESET') {
+                      resetAll();
+                    } else if (userInput !== null) {
+                      alert('❌ Confirmation incorrecte. Réinitialisation annulée pour votre sécurité.');
+                    }
+                  }
+                }}
+                style={{
+                  background: 'var(--error)',
+                  color: 'white',
+                  border: 'none',
+                  padding: '12px 20px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = '#dc2626';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'var(--error)';
+                }}
+              >
+                🗑️ Réinitialiser l'application
+              </button>
+            </div>
+            
+            <div style={{ 
+              background: 'var(--bg-elev)', 
+              border: '1px solid var(--border)',
+              borderRadius: '8px',
+              padding: '16px'
+            }}>
+              <h4 style={{ margin: '0 0 8px 0' }}>
+                ℹ️ Informations de sécurité
+              </h4>
+              <ul style={{ margin: '8px 0', paddingLeft: '20px', fontSize: '14px', color: 'var(--muted)' }}>
+                <li>Votre code PIN est stocké de manière sécurisée (chiffrement SHA-256)</li>
+                <li>Vos données sont protégées localement sur votre appareil</li>
+                <li>Aucune donnée n'est transmise vers des serveurs externes</li>
+                <li>La réinitialisation est la seule façon de récupérer l'accès en cas d'oubli du PIN</li>
+              </ul>
+            </div>
           </div>
         )
       

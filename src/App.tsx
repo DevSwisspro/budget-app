@@ -22,8 +22,9 @@ import { useToast } from './components/Toasts'
 import { loadRecurring, saveRecurring, computeIncomesByCategory, loadCategoryTypes, saveCategoryTypes } from './storage'
 import type { RecurringItem } from './types'
 import SettingsManager from './components/SettingsManager'
-import LockScreen from './components/LockScreen'
-import SecurityService from './services/SecurityService'
+import { bootstrapRoute } from './core/bootstrap'
+import CreatePin from './screens/CreatePin'
+import LoginPin from './screens/LoginPin'
 
 function App() {
   const [transactions, setTransactions] = useState<Transaction[]>(() => loadTransactions())
@@ -34,8 +35,7 @@ function App() {
   const [recurring, setRecurring] = useState<RecurringItem[]>(() => loadRecurring())
   const [categoryTypes, setCategoryTypes] = useState(() => loadCategoryTypes())
   const [showSettings, setShowSettings] = useState(false)
-  const [isLocked, setIsLocked] = useState(true)
-  const [isFirstTime, setIsFirstTime] = useState(false)
+  const [route, setRoute] = useState<'loading'|'create'|'login'|'home'>('loading')
   const { push } = useToast()
 
   useEffect(() => {
@@ -54,33 +54,19 @@ function App() {
   useEffect(() => { saveRecurring(recurring) }, [recurring])
   useEffect(() => { saveCategoryTypes(categoryTypes) }, [categoryTypes])
 
-  // Initialiser la sécurité au démarrage
+  // Initialiser le routing au démarrage
   useEffect(() => {
-    async function initializeSecurity() {
+    async function initializeRoute() {
       try {
-        await SecurityService.initialize()
-        // Vérifier si un PIN existe déjà (première utilisation = pas de PIN)
-        const hasExistingPin = await SecurityService.hasPin()
-        setIsFirstTime(!hasExistingPin)
-        setIsLocked(true) // Toujours verrouillé au démarrage
+        const r = await bootstrapRoute()
+        setRoute(r)
       } catch (error) {
-        console.error('Erreur lors de l\'initialisation de la sécurité:', error)
-        setIsFirstTime(true)
+        console.error('Erreur lors de l\'initialisation:', error)
+        setRoute('create') // Par défaut en cas d'erreur
       }
     }
     
-    initializeSecurity()
-  }, [])
-
-  // Vérifier l'authentification périodiquement
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!SecurityService.isUserAuthenticated()) {
-        setIsLocked(true)
-      }
-    }, 1000)
-
-    return () => clearInterval(interval)
+    initializeRoute()
   }, [])
 
   const monthTransactions = useMemo(
@@ -129,19 +115,42 @@ function App() {
     setBudgets(next)
   }
 
-  function handleUnlock() {
-    setIsLocked(false)
-    setIsFirstTime(false)
+  function handlePinCreated() {
+    setRoute('home')
+  }
+
+  function handlePinVerified() {
+    setRoute('home')
+  }
+
+  // Afficher les écrans selon le routing
+  if (route === 'loading') {
+    return (
+      <div style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        background: 'var(--bg)'
+      }}>
+        <div style={{ textAlign: 'center', color: 'var(--muted)' }}>
+          <div style={{ fontSize: '24px', marginBottom: '16px' }}>🏠</div>
+          <div>Chargement de votre budget...</div>
+        </div>
+      </div>
+    )
+  }
+  
+  if (route === 'create') {
+    return <CreatePin onDone={handlePinCreated} />
+  }
+  
+  if (route === 'login') {
+    return <LoginPin onOK={handlePinVerified} />
   }
 
   return (
     <div className="stack">
-      {isLocked && (
-        <LockScreen 
-          onUnlock={handleUnlock}
-          isFirstTime={isFirstTime}
-        />
-      )}
       <header className="appbar">
         <div className="brand">
           <span className="mark" />
@@ -257,3 +266,4 @@ function App() {
 }
 
 export default App
+
